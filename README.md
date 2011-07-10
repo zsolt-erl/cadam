@@ -6,7 +6,7 @@ applications but can be used for just monitoring a cluster.
 It uses the event\_collector module from the Event Tracker application and basically implements a general event\_viewer
 behaviour that is used by other modules that process the collected events.   
 The benefit of using the event\_collector is that reporting an event adds almost no overhead to a application when it is 
-not being monitored (see [et:event_report/5][et]). This way you can leave debug or info reports in a production system 
+not being monitored (see [et:report_event/5][et]). This way you can leave debug or info reports in a production system 
 without slowing it down and run CADAM to monitor it when needed.
 
 Currently the only fully workable module is the metrics module (cadam\_metrics). This module collects metrics data from 
