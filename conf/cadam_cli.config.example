@@ -1,0 +1,5 @@
+%% name of the node the the CADAM app will run on   (can be sname if target cluster is running with short names)
+{name, "cadam@127.0.0.1"}.
+
+%% cookie to start the CADAM node with (this has to be the cookie that the monitored cluster uses)
+{cookie, "cadam"}.

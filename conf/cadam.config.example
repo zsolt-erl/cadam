@@ -1,0 +1,20 @@
+[
+ {cadam,[
+	 %% load local et beam files on the target nodes (monitored nodes)
+	 %% {netload_et, true},
+
+	 %% path to et beams, this will be set with code:add_patha/1 before the app is started
+	 %% if the target nodes are not running the same version of the erlang VM as the cadam node 
+	 %% (eg. running lower version and cannot convert to the same as the cadam node's version for example
+	 %% when monitoring riak from an r14b03 node) this can be useful to load a version of et that
+	 %% was compiled on a different VM
+	 %% {et_beam_path, "priv/et_beams"}
+	]},
+ {sasl,[
+	{sasl_error_logger, false},
+	{errlog_type, error},
+	{error_logger_mf_dir, "priv/logs/sasl"},
+	{error_logger_mf_maxbytes, 10485760},
+	{error_logger_mf_maxfiles, 5}
+       ]}
+].

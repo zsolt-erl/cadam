@@ -1,0 +1,1 @@
+erl -name t -setcookie metis -pa ebin -boot start_sasl -config conf/cadam

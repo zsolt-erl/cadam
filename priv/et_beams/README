@@ -1,0 +1,9 @@
+This directory contains compiled beam files of the ET application.
+If et_beam_path is set on the config file to this dir. then these are going to be loaded on the CADAM node.
+In addition to this if network_load is set to true in the config file then the et beam files will be loaded 
+from the CADAM node to the target nodes over the network.
+This is needed if ET is not available on the target nodes or the Erlang VMs on the target nodes are older 
+then the CADAM node's VM (eg. CADAM node runs on R14B03 and is used to monitor a Riak cluster which runs on R13)
+
+Initially this contains beams compiled with 64bit R13B03, but you can replace these or use an other dir. 
+and set it in the config).

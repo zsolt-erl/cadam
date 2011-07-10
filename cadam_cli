@@ -1,0 +1,124 @@
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -pa ebin/
+
+%% assumes that there's a APPNAME.config and a APPNAME_cli.config in the conf/ dir
+%% APPNAME.config is the regular app config file
+%% APPNAME_cli.config has the config for this script
+
+-define( COMMANDS, ["start", "stop", "ping", "help", "nodes", "start-module", "stop-module", "viewer", "connect"] ).
+-define( APPNAME, "cadam"). 
+
+main([]) -> usage();
+main([Command|Args]) ->
+    {ok, Config} = file:consult("conf/"?APPNAME++"_cli.config"),
+
+    Cookie = proplists:get_value(cookie, Config),
+
+    {NameType, CadamName} = 
+	case proplists:get_value(name, Config) of 
+	    undefined ->
+		case proplists:get_value(sname, Config) of
+		    undefined ->
+			io:format("No node name in config file!~n"),
+			halt(1);
+		    SName ->
+			{shortnames, SName}
+		end;
+	    LName ->
+		{longnames, LName}
+	end,
+    CadamNode = list_to_atom(CadamName),
+
+    error_logger:tty(false),
+    Context =
+	%% check if net_kernel can be started and CADAM node can be reached
+	case net_kernel:start([list_to_atom("_cli_"++CadamName)]) of
+	    {ok, _Pid} -> 
+		erlang:set_cookie(node(), list_to_atom(Cookie)),
+		%%io:format("Started net kernel~n"),
+		net_kernel:hidden_connect_node(CadamNode),
+		case net_adm:ping(CadamNode) of
+		    pong -> running;
+		    pang -> not_running
+		end;
+	    _Else      -> 
+		not_running
+	end,
+    
+    case {Context, Command} of
+	{_, "help"} -> usage();
+
+	{not_running, "start"} ->
+	    start_node(NameType, CadamName, Cookie);
+	{not_running, _} ->
+	    io:format("~s node is not running.~n", [?APPNAME]);
+
+	{running, "start"} ->
+	    io:format("~s node is already running!~n", [?APPNAME]);
+	{running, "stop"} -> 
+	    rpc:call(CadamNode, list_to_atom(?APPNAME), stop, [], 60000),
+	    rpc:call(CadamNode, init, stop, []),
+	    io:format("~s stopped~n", [?APPNAME]);
+	{running, "ping"} ->
+	    io:format("~s node is running.~n", [?APPNAME]);
+	{running, "nodes"} ->
+	    io:format("Nodes connected to the CADAM node:~n"),
+	    Nodes = rpc:call(CadamNode, erlang, nodes, []),
+	    lists:map(
+	      fun(Node)-> io:format("    ~s~n", [Node]) end,
+	      Nodes);
+	{running, "connect"} ->
+	    TargetNodeFromArg = list_to_atom(hd(Args)),
+	    io:format("Connecting to ~s ...  ", [TargetNodeFromArg]),
+	    Result2 = rpc:call(CadamNode, list_to_atom(?APPNAME), connect, [TargetNodeFromArg], 60000),
+	    io:format("~p~n", [Result2]);
+	{running, "viewer"} ->
+	    io:format("Starting et_viewer.~n"),
+	    rpc:call(CadamNode, cadam, et_viewer, []);
+
+
+	{running, "start-module"} -> 
+	    Module = list_to_atom(hd(Args)),
+	    Result = rpc:call(CadamNode, list_to_atom(?APPNAME), start_module, [Module], 60000),
+	    io:format("Starting module: ~s ... ~p~n", [Module, Result]);
+
+	{running, "stop-module"} -> 
+	    Module = list_to_atom(hd(Args)),
+	    Result = rpc:call(CadamNode, list_to_atom(?APPNAME), stop_module, [Module], 60000),
+	    io:format("Stopping module: ~s ... ~p~n", [Module, Result]);
+
+	    
+	{running, _Cmd} ->
+	    io:format("Invalid command.~n"),
+	    usage()
+    end.
+
+
+
+usage()->
+    io:format("Usage: ~s_cli {~s}~n", [ ?APPNAME, string:join(?COMMANDS, "|")]).
+
+
+start_node(NameType, NodeName, Cookie)->
+    NameArg = case NameType of 
+		  shortnames -> "-sname";
+		  longnames  -> "-name"
+	      end,
+    Cmd = string:join([
+		       %% "xterm -geometry 135x24 -e",
+		       "erl",
+		       "-detached",
+		       NameArg, NodeName, 
+		       "-setcookie", Cookie,
+		       "-pa ebin/ lib/*/ebin/ deps/*/ebin/",
+		       "-boot start_sasl",
+		       "-config conf/"++?APPNAME,
+		       "-s", ?APPNAME], " "),
+    %% io:format("starting epmd~n"),
+    os:cmd("epmd -daemon"),
+    timer:sleep(1000),
+
+    io:format("starting cadam node~n"),
+    open_port({spawn, Cmd}, []),
+    ok.

@@ -1,0 +1,82 @@
+============================================================
+    Title     : ws server to store subscriptions
+============================================================
+TicId     : 3553e2a3ce973a3b3f959ced95711cb9599c28a5
+Assigned  : zsolt.erl@gmail.com
+Opened    : Wed Jun 29 21:58:02 -0400 2011 (11 days)
+State     : OPEN
+Tags      : todo, ws-server
+Comments (2):
+  * Added 07/04 21:38 by zsolt.erl@gmail.com
+	done except for sending the queue number with the message
+	currently it's only possible to subscribe to the first queue
+  * Added 06/29 21:58 by zsolt.erl@gmail.com
+	
+	the websocket_server needs to store what queues it is subscribed to
+	and needs to tag the messages that it sends back to the client with
+	the metrics id and the queue number
+
+
+
+============================================================
+    Title     : metric list handling is broken
+============================================================
+TicId     : 487c865d5b77861e13cec217961874350314dd86
+Assigned  : zsolt.erl@gmail.com
+Opened    : Mon Jul 04 21:37:10 -0400 2011 (6 days)
+State     : OPEN
+Tags      : bug, metrics
+Comments (1):
+  * Added 07/04 21:37 by zsolt.erl@gmail.com
+	
+	when a metric generator generates an event with more then one metric in the
+	content
+	then cadam_metrics exits with an error
+
+
+
+============================================================
+    Title     : keep track of started modules
+============================================================
+TicId     : 32a1cc3a08fb254da01c272c31ab65fb6c1aa1ee
+Assigned  : zsolt.erl@gmail.com
+Opened    : Mon Jul 04 22:53:25 -0400 2011 (5 days)
+State     : OPEN
+Tags      : controller, todo
+Comments (1):
+  * Added 07/04 22:53 by zsolt.erl@gmail.com
+	controller needs to keep track of started modules
+	so as to not try to start one when it's already running or stop one
+	when it's not running
+
+
+
+============================================================
+    Title     : trace sg else not et
+============================================================
+TicId     : abfad560c2e736c52c0870a1ab4ca199ee040295
+Assigned  : zsolt.erl@gmail.com
+Opened    : Tue Jul 05 22:24:24 -0400 2011 (5 days)
+State     : OPEN
+Tags      : cadam, todo
+Comments (1):
+  * Added 07/05 22:24 by zsolt.erl@gmail.com
+	et:report event is used by other apps that I don't want to monitor
+	(eg. pman), need to work out to use sg else
+
+
+
+============================================================
+    Title     : send matrics list updates
+============================================================
+TicId     : bf994a7ac19e2776c2d96a375c1369d54499c512
+Assigned  : zsolt.erl@gmail.com
+Opened    : Fri Jul 08 14:38:37 -0400 2011 (2 days)
+State     : OPEN
+Tags      : metrics, todo
+Comments (1):
+  * Added 07/08 14:38 by zsolt.erl@gmail.com
+	cadam_metrics needs to send metrics list updates to webscoket_server
+
+
+
