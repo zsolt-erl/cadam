@@ -231,4 +231,4 @@ I'm sure there are some more interesting metrics that could be monitored on a Ri
 that out yet. Also the Riak source could be modified to expose some metrics data.
 
 [SmoothieCharts]: http://github.com/joewalnes/smoothie
-[et]: http://erlang.org
+[et]: http://www.erlang.org/doc/man/et.html
